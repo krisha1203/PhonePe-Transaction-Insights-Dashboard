@@ -1,0 +1,664 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhonePe Dashboard - All 13 Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --emerald-green: #259f35;
+            --royal-navy-blue: #001a66;
+            --emerald-to-navy-gradient: linear-gradient(135deg, #259f35 0%, #001a66 100%);
+            --bg-light: #e1e6eb;
+            --text-dark: #080b0e;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .header {
+            background: var(--emerald-to-navy-gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-light);
+            border: 2px solid var(--emerald-green);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--emerald-green);
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: var(--emerald-green);
+            color: white;
+        }
+
+        .tab-btn.active {
+            background: var(--emerald-green);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .chart-card h3 {
+            color: var(--emerald-green);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+
+        .chart-large {
+            height: 450px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--emerald-to-navy-gradient);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💳 PhonePe Transaction Insights Dashboard</h1>
+        <p>All 13 Interactive Charts with Real Data</p>
+    </div>
+
+    <div class="container">
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('overview')">📊 Overview</button>
+            <button class="tab-btn" onclick="showTab('transactions')">💰 Transactions</button>
+            <button class="tab-btn" onclick="showTab('users')">👥 Users</button>
+            <button class="tab-btn" onclick="showTab('geographic')">📍 Geographic</button>
+            <button class="tab-btn" onclick="showTab('trends')">📈 Trends</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Total Users</h4>
+                    <div class="value">587M</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Total Transactions</h4>
+                    <div class="value">₹345L Cr</div>
+                </div>
+                <div class="stat-card">
+                    <h4>States Covered</h4>
+                    <div class="value">36</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Charts</h4>
+                    <div class="value">13</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card full-width">
+                    <h3>📈 Chart 11: Year-over-Year Transaction Growth</h3>
+                    <div class="chart-container chart-large">
+                        <canvas id="chart11"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>🔄 Chart 3: Transaction Type Distribution (Treemap View)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart3"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>🥧 Chart 5: Transaction Category Breakdown</h3>
+                    <div class="chart-container">
+                        <canvas id="chart5"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Tab -->
+        <div id="transactions" class="tab-content">
+            <div class="charts-grid">
+                <div class="chart-card full-width">
+                    <h3>📊 Chart 4: Top 10 States by Transaction Amount</h3>
+                    <div class="chart-container">
+                        <canvas id="chart4"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>📈 Chart 6: Quarterly Transaction Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="chart6"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>🔵 Chart 12: Transaction Count vs Amount (Scatter)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart12"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="tab-content">
+            <div class="charts-grid">
+                <div class="chart-card full-width">
+                    <h3>📈 Chart 1: User Registration Growth Trend</h3>
+                    <div class="chart-container">
+                        <canvas id="chart1"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>📊 Chart 2: Top 10 States by Registered Users</h3>
+                    <div class="chart-container">
+                        <canvas id="chart2"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>📱 Chart 13: App Opens Trend</h3>
+                    <div class="chart-container">
+                        <canvas id="chart13"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geographic Tab -->
+        <div id="geographic" class="tab-content">
+            <div class="charts-grid">
+                <div class="chart-card full-width">
+                    <h3>🗺️ Chart 8: State-wise Transaction Heatmap (Top 20)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart8"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>🏙️ Chart 7: Top 10 Districts by Transaction Amount</h3>
+                    <div class="chart-container">
+                        <canvas id="chart7"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>🔢 Chart 9: Top 10 Pincodes by Transaction Amount</h3>
+                    <div class="chart-container">
+                        <canvas id="chart9"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card full-width">
+                    <h3>🌳 Chart 10: District Transaction Distribution (Treemap View)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart10"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trends Tab -->
+        <div id="trends" class="tab-content">
+            <div class="charts-grid">
+                <div class="chart-card full-width">
+                    <h3>📈 Chart 11: Year-over-Year Growth Analysis</h3>
+                    <div class="chart-container chart-large">
+                        <canvas id="chart11b"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>📊 Chart 6: Quarterly Patterns (2022-2024)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart6b"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>👥 Chart 1: User Growth Trajectory</h3>
+                    <div class="chart-container">
+                        <canvas id="chart1b"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart data
+        const chartsData = {"chart1_user_trend": {"labels": ["2022-Q1", "2022-Q2", "2022-Q3", "2022-Q4", "2023-Q1", "2023-Q2", "2023-Q3", "2023-Q4", "2024-Q1", "2024-Q2", "2024-Q3", "2024-Q4"], "users": [372.9, 393.4, 414.3, 433.9, 453.9, 472.4, 491.4, 509.4, 530.1, 550.3, 568.0, 586.8], "app_opens": [15.72, 17.79, 19.22, 21.26, 22.93, 24.93, 27.22, 29.94, 32.63, 35.41, 38.13, 40.42]}, "chart2_top_states_users": {"labels": ["Haryana", "Madhya Pradesh", "Tamil Nadu", "Telangana", "West Bengal", "Rajasthan", "Andhra Pradesh", "Karnataka", "Uttar Pradesh", "Maharashtra"], "values": [368.1, 470.7, 506.5, 524.6, 525.0, 555.8, 556.7, 733.7, 942.3, 1140.1]}, "chart3_trans_treemap": {"labels": ["Financial Services", "Merchant payments", "Others", "Peer-to-peer payments", "Recharge & bill payments"], "values": [14.2, 6533.99, 17.43, 26652.74, 1333.88], "counts": [0.15, 130.24, 0.26, 85.03, 19.6]}, "chart4_top_states_trans": {"labels": ["Odisha", "West Bengal", "Bihar", "Madhya Pradesh", "Rajasthan", "Uttar Pradesh", "Andhra Pradesh", "Maharashtra", "Karnataka", "Telangana"], "values": [1226.4, 1558.42, 1790.13, 1912.53, 2634.32, 2688.52, 3466.91, 4037.42, 4067.87, 4165.6]}, "chart5_trans_pie": {"labels": ["Financial Services", "Merchant payments", "Others", "Peer-to-peer payments", "Recharge & bill payments"], "values": [142018823748.86, 65339877098473.63, 174280662903.38, 266527358952424.06, 13338759427748.797]}, "chart6_quarterly_trend": {"labels": ["2022-Q1", "2022-Q2", "2022-Q3", "2022-Q4", "2023-Q1", "2023-Q2", "2023-Q3", "2023-Q4", "2024-Q1", "2024-Q2", "2024-Q3", "2024-Q4"], "values": [1323.96, 1550.42, 1660.76, 1891.49, 2051.4, 2291.85, 2401.21, 2704.72, 2945.84, 3182.04, 3234.7, 3599.88]}, "chart7_top_districts": {"labels": ["Bengaluru Urban District", "Hyderabad District", "Pune District", "Jaipur District", "Rangareddy District", "Medchal Malkajgiri District", "Visakhapatnam District", "Guntur District", "Krishna District", "Patna District"], "values": [1993.78, 1190.69, 973.02, 785.41, 715.51, 575.89, 419.86, 317.45, 314.29, 311.08]}, "chart8_state_heatmap": {"labels": ["Telangana", "Karnataka", "Maharashtra", "Andhra Pradesh", "Uttar Pradesh", "Rajasthan", "Madhya Pradesh", "Bihar", "West Bengal", "Odisha", "Tamil Nadu", "Delhi", "Gujarat", "Haryana", "Jharkhand", "Chhattisgarh", "Kerala", "Punjab", "Assam", "Uttarakhand"], "values": [4165.6, 4067.87, 4037.42, 3466.91, 2688.52, 2634.32, 1912.53, 1790.13, 1558.42, 1226.4, 1193.62, 1163.75, 1019.29, 964.5, 590.66, 554.49, 377.83, 295.69, 197.16, 182.91]}, "chart9_top_pincodes": {"labels": ["560001", "500001", "400001", "110001", "600001", "700001", "380001", "500081", "560050", "201301"], "values": [7577.33, 6661.46, 4697.84, 4548.08, 4447.47, 4217.71, 4047.79, 3899.8, 3846.44, 3735.17]}, "chart10_district_treemap": {"labels": ["Bengaluru Urban District", "Hyderabad District", "Pune District", "Jaipur District", "Rangareddy District", "Medchal Malkajgiri District", "Visakhapatnam District", "Guntur District", "Krishna District", "Patna District", "Thane District", "Mumbai District", "Lucknow District", "Ghaziabad District", "East Godavari District"], "values": [1993.78, 1190.69, 973.02, 785.41, 715.51, 575.89, 419.86, 317.45, 314.29, 311.08, 256.14, 243.67, 242.24, 222.27, 218.16]}, "chart11_yearly_growth": {"labels": ["2018", "2019", "2020", "2021", "2022", "2023", "2024"], "values": [162.3, 627.67, 1464.12, 3459.87, 6426.63, 9449.18, 12962.46]}, "chart12_scatter": {"states": ["Telangana", "Karnataka", "Maharashtra", "Andhra Pradesh", "Uttar Pradesh", "Rajasthan", "Madhya Pradesh", "Bihar", "West Bengal", "Odisha", "Tamil Nadu", "Delhi", "Gujarat", "Haryana", "Jharkhand", "Chhattisgarh", "Kerala", "Punjab", "Assam", "Uttarakhand"], "counts": [12.49, 9.44, 11.0, 13.75, 16.82, 14.38, 11.54, 10.94, 10.02, 8.45, 7.06, 1.95, 6.31, 5.03, 5.02, 4.26, 3.08, 2.5, 2.27, 1.77], "amounts": [4165.6, 4067.87, 4037.42, 3466.91, 2688.52, 2634.32, 1912.53, 1790.13, 1558.42, 1226.4, 1193.62, 1163.75, 1019.29, 964.5, 590.66, 554.49, 377.83, 295.69, 197.16, 182.91]}, "chart13_app_opens": {"labels": ["2022-Q1", "2022-Q2", "2022-Q3", "2022-Q4", "2023-Q1", "2023-Q2", "2023-Q3", "2023-Q4", "2024-Q1", "2024-Q2", "2024-Q3", "2024-Q4"], "values": [15.72, 17.79, 19.22, 21.26, 22.93, 24.93, 27.22, 29.94, 32.63, 35.41, 38.13, 40.42]}};
+
+        // PhonePe color palette
+        const colors = {
+            purple: '#5f259f',
+            purpleLight: '#8a4ac8',
+            gradient: ['#667eea', '#764ba2', '#8a5dc7'],
+            multi: ['#5f259f', '#764ba2', '#8a5dc7', '#9e6dd0', '#b285d9', '#c69de2']
+        };
+
+        // Chart 1: User Registration Trend
+        new Chart(document.getElementById('chart1'), {
+            type: 'line',
+            data: {
+                labels: chartsData.chart1_user_trend.labels,
+                datasets: [{
+                    label: 'Registered Users (Millions)',
+                    data: chartsData.chart1_user_trend.users,
+                    borderColor: colors.purple,
+                    backgroundColor: 'rgba(95, 37, 159, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('chart1b'), {
+            type: 'line',
+            data: {
+                labels: chartsData.chart1_user_trend.labels,
+                datasets: [{
+                    label: 'Registered Users (Millions)',
+                    data: chartsData.chart1_user_trend.users,
+                    borderColor: colors.purple,
+                    backgroundColor: 'rgba(95, 37, 159, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 2: Top States by Users
+        new Chart(document.getElementById('chart2'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.chart2_top_states_users.labels,
+                datasets: [{
+                    label: 'Users (Millions)',
+                    data: chartsData.chart2_top_states_users.values,
+                    backgroundColor: colors.gradient
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 3: Transaction Type Treemap (as Doughnut)
+        new Chart(document.getElementById('chart3'), {
+            type: 'doughnut',
+            data: {
+                labels: chartsData.chart3_trans_treemap.labels,
+                datasets: [{
+                    data: chartsData.chart3_trans_treemap.values,
+                    backgroundColor: colors.multi
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 4: Top States by Transaction
+        new Chart(document.getElementById('chart4'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.chart4_top_states_trans.labels,
+                datasets: [{
+                    label: 'Amount (₹ Billions)',
+                    data: chartsData.chart4_top_states_trans.values,
+                    backgroundColor: colors.gradient
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 5: Transaction Category Pie
+        new Chart(document.getElementById('chart5'), {
+            type: 'pie',
+            data: {
+                labels: chartsData.chart5_trans_pie.labels,
+                datasets: [{
+                    data: chartsData.chart5_trans_pie.values,
+                    backgroundColor: colors.multi
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 6: Quarterly Trends
+        new Chart(document.getElementById('chart6'), {
+            type: 'line',
+            data: {
+                labels: chartsData.chart6_quarterly_trend.labels,
+                datasets: [{
+                    label: 'Transaction Amount (₹ Billions)',
+                    data: chartsData.chart6_quarterly_trend.values,
+                    borderColor: colors.purple,
+                    backgroundColor: 'rgba(95, 37, 159, 0.2)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        new Chart(document.getElementById('chart6b'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.chart6_quarterly_trend.labels,
+                datasets: [{
+                    label: 'Transaction Amount (₹ Billions)',
+                    data: chartsData.chart6_quarterly_trend.values,
+                    backgroundColor: colors.purple
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 7: Top Districts
+        new Chart(document.getElementById('chart7'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.chart7_top_districts.labels,
+                datasets: [{
+                    label: 'Amount (₹ Billions)',
+                    data: chartsData.chart7_top_districts.values,
+                    backgroundColor: colors.purple
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 8: State Heatmap (as horizontal bar)
+        new Chart(document.getElementById('chart8'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.chart8_state_heatmap.labels,
+                datasets: [{
+                    label: 'Transaction Amount (₹ Billions)',
+                    data: chartsData.chart8_state_heatmap.values,
+                    backgroundColor: chartsData.chart8_state_heatmap.values.map((v, i) => {
+                        const opacity = 1 - (i / chartsData.chart8_state_heatmap.values.length) * 0.6;
+                        return `rgba(95, 37, 159, ${opacity})`;
+                    })
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 9: Top Pincodes
+        new Chart(document.getElementById('chart9'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.chart9_top_pincodes.labels,
+                datasets: [{
+                    label: 'Amount (₹ Millions)',
+                    data: chartsData.chart9_top_pincodes.values,
+                    backgroundColor: colors.purpleLight
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 10: District Treemap (as horizontal bar)
+        new Chart(document.getElementById('chart10'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.chart10_district_treemap.labels,
+                datasets: [{
+                    label: 'Amount (₹ Billions)',
+                    data: chartsData.chart10_district_treemap.values,
+                    backgroundColor: colors.multi
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 11: Yearly Growth
+        new Chart(document.getElementById('chart11'), {
+            type: 'bar',
+            data: {
+                labels: chartsData.chart11_yearly_growth.labels,
+                datasets: [{
+                    label: 'Transaction Amount (₹ Billions)',
+                    data: chartsData.chart11_yearly_growth.values,
+                    backgroundColor: colors.gradient
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        new Chart(document.getElementById('chart11b'), {
+            type: 'line',
+            data: {
+                labels: chartsData.chart11_yearly_growth.labels,
+                datasets: [{
+                    label: 'Transaction Amount (₹ Billions)',
+                    data: chartsData.chart11_yearly_growth.values,
+                    borderColor: colors.purple,
+                    backgroundColor: 'rgba(95, 37, 159, 0.2)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 12: Scatter Plot
+        new Chart(document.getElementById('chart12'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'States',
+                    data: chartsData.chart12_scatter.counts.map((count, i) => ({
+                        x: count,
+                        y: chartsData.chart12_scatter.amounts[i]
+                    })),
+                    backgroundColor: colors.purple
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Transaction Count (Billions)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Transaction Amount (₹ Billions)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 13: App Opens
+        new Chart(document.getElementById('chart13'), {
+            type: 'line',
+            data: {
+                labels: chartsData.chart13_app_opens.labels,
+                datasets: [{
+                    label: 'App Opens (Billions)',
+                    data: chartsData.chart13_app_opens.values,
+                    borderColor: colors.purpleLight,
+                    backgroundColor: 'rgba(138, 74, 200, 0.2)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Tab switching function
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
